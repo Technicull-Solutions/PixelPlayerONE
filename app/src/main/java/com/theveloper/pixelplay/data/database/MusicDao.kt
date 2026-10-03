@@ -273,6 +273,12 @@ interface MusicDao {
     @Query("SELECT id FROM songs WHERE source_type = 6")
     suspend fun getAllJellyfinSongIds(): List<Long>
 
+    @Query("SELECT id FROM songs WHERE source_type = 7")
+    suspend fun getAllPlexSongIds(): List<Long>
+
+    @Query("SELECT COUNT(*) FROM songs WHERE source_type = 7")
+    fun getPlexSongCount(): Flow<Int>
+
     @Transaction
     suspend fun deleteSongsAndRelatedData(songIds: List<Long>) {
         if (songIds.isEmpty()) return

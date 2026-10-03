@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
+        <exclude domain="sharedpref" path="plex_prefs.xml"/>
         <!-- Exclude all credential/token stores from cloud backup -->
         <exclude domain="sharedpref" path="jellyfin_prefs.xml"/>
         <exclude domain="sharedpref" path="navidrome_prefs.xml"/>
@@ -23,6 +24,7 @@
         <exclude domain="file" path="datastore/settings.preferences_pb"/>
     </cloud-backup>
     <device-transfer>
+        <exclude domain="sharedpref" path="plex_prefs.xml"/>
         <!-- Also exclude from device-to-device transfers — user must re-authenticate -->
         <exclude domain="sharedpref" path="jellyfin_prefs.xml"/>
         <exclude domain="sharedpref" path="navidrome_prefs.xml"/>

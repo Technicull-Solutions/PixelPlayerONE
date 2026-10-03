@@ -28,7 +28,8 @@ enum class ExternalServiceAccount {
     NETEASE,
     QQ_MUSIC,
     NAVIDROME,
-    JELLYFIN
+    JELLYFIN,
+    PLEX
 }
 
 data class ExternalAccountUiModel(
@@ -52,10 +53,19 @@ class AccountsViewModel @Inject constructor(
     private val neteaseRepository: NeteaseRepository,
     private val qqMusicRepository: QqMusicRepository,
     private val navidromeRepository: NavidromeRepository,
-    private val jellyfinRepository: JellyfinRepository
+    private val jellyfinRepository: JellyfinRepository,
+    private val plexRepository: com.theveloper.pixelplay.data.plex.PlexRepository
 ) : ViewModel() {
 
     private val loggingOutServices = MutableStateFlow<Set<ExternalServiceAccount>>(emptySet())
+
+    init {
+        viewModelScope.launch { runCatching { plexRepository.restore() } }
+    }
+
+    private val plexStateFlow = combine(plexRepository.connected, plexRepository.songCount) { connected, count ->
+        connected to count
+    }
 
     private val telegramStateFlow = combine(
         telegramRepository.authorizationState
@@ -109,7 +119,8 @@ class AccountsViewModel @Inject constructor(
                 neteaseStateFlow,
                 qqMusicStateFlow,
                 navidromeStateFlow,
-                jellyfinStateFlow
+                jellyfinStateFlow,
+                plexStateFlow
             )
         ) { it.toList() },
         loggingOutServices
@@ -120,8 +131,17 @@ class AccountsViewModel @Inject constructor(
         val (qqConnected, qqPlaylistCount) = states[3] as Pair<Boolean, Int>
         val (navidromeConnected, navidromePlaylistCount) = states[4] as Pair<Boolean, Int>
         val (jellyfinConnected, jellyfinPlaylistCount) = states[5] as Pair<Boolean, Int>
+        val (plexConnected, plexSongCount) = states[6] as Pair<Boolean, Int>
 
         val connectedAccounts = buildList {
+            if (plexConnected) {
+                add(ExternalAccountUiModel(
+                    service = ExternalServiceAccount.PLEX, title = "Plex",
+                    accountLabel = plexRepository.serverUrl ?: "Plex music server",
+                    syncedContentLabel = formatCount(plexSongCount, "imported track", "imported tracks"),
+                    isLoggingOut = ExternalServiceAccount.PLEX in activeLogouts
+                ))
+            }
             if (telegramConnected) {
                 add(
                     ExternalAccountUiModel(
@@ -227,6 +247,7 @@ class AccountsViewModel @Inject constructor(
         }
 
         val disconnectedServices = buildList {
+            if (!plexConnected) add(ExternalServiceAccount.PLEX)
             if (!telegramConnected) add(ExternalServiceAccount.TELEGRAM)
             if (!gDriveConnected) add(ExternalServiceAccount.GOOGLE_DRIVE)
             if (!neteaseConnected) add(ExternalServiceAccount.NETEASE)
@@ -259,6 +280,7 @@ class AccountsViewModel @Inject constructor(
                         ExternalServiceAccount.QQ_MUSIC -> qqMusicRepository.logout()
                         ExternalServiceAccount.NAVIDROME -> navidromeRepository.logout()
                         ExternalServiceAccount.JELLYFIN -> jellyfinRepository.logout()
+                        ExternalServiceAccount.PLEX -> plexRepository.disconnect()
                     }
                 }
             } finally {

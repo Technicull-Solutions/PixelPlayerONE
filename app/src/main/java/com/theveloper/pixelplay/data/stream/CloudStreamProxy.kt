@@ -157,6 +157,12 @@ abstract class CloudStreamProxy<K : Any>(
     /** Extract the raw ID string from a parsed URI. Override for custom URI layouts. */
     protected open fun extractIdFromUri(uri: Uri): String? = uri.host
 
+    /** Self-hosted providers can enforce an exact configured origin and attach private headers. */
+    protected open fun isAllowedStreamUrl(url: String): Boolean =
+        CloudStreamSecurity.isSafeRemoteStreamUrl(url, allowedHostSuffixes, allowHttpForAllowedHosts = true)
+
+    protected open fun upstreamRequest(url: String): Request.Builder = Request.Builder().url(url)
+
     // ─── Internal ──────────────────────────────────────────────────────
 
     protected suspend fun getOrFetchStreamUrl(id: K): String? {
@@ -196,17 +202,12 @@ abstract class CloudStreamProxy<K : Any>(
                             call.respond(HttpStatusCode.NotFound, "No stream URL available")
                             return@get
                         }
-                        if (!CloudStreamSecurity.isSafeRemoteStreamUrl(
-                                url = streamUrl,
-                                allowedHostSuffixes = allowedHostSuffixes,
-                                allowHttpForAllowedHosts = true
-                            )
-                        ) {
+                        if (!isAllowedStreamUrl(streamUrl)) {
                             call.respond(HttpStatusCode.BadGateway, "Rejected upstream stream URL")
                             return@get
                         }
 
-                        val requestBuilder = Request.Builder().url(streamUrl)
+                        val requestBuilder = upstreamRequest(streamUrl)
                         rangeValidation.normalizedHeader?.let {
                             requestBuilder.header("Range", it)
                         }

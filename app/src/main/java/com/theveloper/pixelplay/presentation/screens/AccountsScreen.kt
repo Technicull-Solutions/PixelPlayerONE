@@ -223,6 +223,8 @@ fun AccountsScreen(
                             painterResource(R.drawable.qq_music)
                         } else if (account.service == ExternalServiceAccount.TELEGRAM) {
                             painterResource(R.drawable.telegram)
+                        } else if (account.service == ExternalServiceAccount.PLEX) {
+                            painterResource(R.drawable.ic_plex)
                         } else if (account.service == ExternalServiceAccount.JELLYFIN) {
                             painterResource(R.drawable.ic_jellyfin)
                         } else if (account.service == ExternalServiceAccount.NAVIDROME) {
@@ -562,6 +564,7 @@ private fun EmptyAccountsCard(
                     ExternalServiceAccount.TELEGRAM -> painterResource(R.drawable.telegram)
                     ExternalServiceAccount.GOOGLE_DRIVE -> painterResource(R.drawable.rounded_drive_export_24)
                     ExternalServiceAccount.JELLYFIN -> painterResource(R.drawable.ic_jellyfin)
+                    ExternalServiceAccount.PLEX -> painterResource(R.drawable.ic_plex)
                     ExternalServiceAccount.NAVIDROME -> painterResource(R.drawable.ic_navidrome_md3)
                 }
                 FilledTonalButton(
@@ -647,6 +650,14 @@ private fun servicePalette(service: ExternalServiceAccount): ServicePalette {
             primaryActionContainer = Color(0xFFE3F2FD),
             primaryActionTint = Color(0xFF1565C0)
         )
+        ExternalServiceAccount.PLEX -> ServicePalette(
+            iconContainer = MaterialTheme.colorScheme.surfaceContainerHighest,
+            iconTint = Color(0xFFE5A00D),
+            statusContainer = MaterialTheme.colorScheme.primaryContainer,
+            statusTint = MaterialTheme.colorScheme.onPrimaryContainer,
+            primaryActionContainer = MaterialTheme.colorScheme.primaryContainer,
+            primaryActionTint = MaterialTheme.colorScheme.onPrimaryContainer
+        )
         ExternalServiceAccount.JELLYFIN -> ServicePalette(
             iconContainer = Color(0xFF00A4DC),
             iconTint = Color.White,
@@ -666,6 +677,7 @@ private fun accountIcon(service: ExternalServiceAccount): ImageVector {
         ExternalServiceAccount.QQ_MUSIC -> Icons.Rounded.MusicNote
         ExternalServiceAccount.NAVIDROME -> Icons.Rounded.CloudQueue
         ExternalServiceAccount.JELLYFIN -> Icons.Rounded.CloudQueue
+        ExternalServiceAccount.PLEX -> Icons.Rounded.MusicNote
     }
 }
 
@@ -721,6 +733,7 @@ private fun serviceDisplayName(service: ExternalServiceAccount): String {
         ExternalServiceAccount.QQ_MUSIC -> stringResource(R.string.auth_qq_title)
         ExternalServiceAccount.NAVIDROME -> stringResource(R.string.auth_subsonic_title)
         ExternalServiceAccount.JELLYFIN -> stringResource(R.string.auth_jellyfin_title)
+        ExternalServiceAccount.PLEX -> "Plex"
     }
 }
 
@@ -734,6 +747,9 @@ private fun openService(
     preferNeteaseDashboard: Boolean
 ) {
     when (service) {
+        ExternalServiceAccount.PLEX -> safeStartActivity(
+            context, Intent(context, com.theveloper.pixelplay.presentation.plex.PlexActivity::class.java)
+        )
         ExternalServiceAccount.TELEGRAM -> {
             safeStartActivity(
                 context = context,

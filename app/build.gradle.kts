@@ -363,6 +363,8 @@ dependencies {
     testImplementation(libs.androidx.junit)
     testImplementation(libs.androidx.room.testing)
     testImplementation(kotlin("test"))
+    // Use the real JSON implementation for Plex response fixtures in JVM tests.
+    testImplementation("org.json:json:20240303")
 
     // Testing (Instrumentation)
     androidTestImplementation(libs.androidx.junit)

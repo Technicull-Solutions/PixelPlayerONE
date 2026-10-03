@@ -22,6 +22,7 @@ object SourceType {
     const val QQMUSIC = 4
     const val NAVIDROME = 5
     const val JELLYFIN = 6
+    const val PLEX = 7
 
     /** Derive source type from a content URI string (fallback for migration / conversion). */
     fun fromContentUri(uri: String): Int = when {
@@ -31,6 +32,7 @@ object SourceType {
         uri.startsWith("qqmusic://") -> QQMUSIC
         uri.startsWith("navidrome://") -> NAVIDROME
         uri.startsWith("jellyfin://") -> JELLYFIN
+        uri.startsWith("plex://") -> PLEX
         else -> LOCAL
     }
 }

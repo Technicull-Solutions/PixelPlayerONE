@@ -114,6 +114,13 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".presentation.plex.PlexActivity"
+            android:exported="false"
+            android:label="Plex music"
+            android:theme="@style/Theme.PixelPlay"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".presentation.jellyfin.auth.JellyfinLoginActivity"
             android:exported="false"
             android:label="Jellyfin Login"

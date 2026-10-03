@@ -105,6 +105,18 @@ fun StreamingProviderSheet(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     ProviderRow(
+                        iconPainter = painterResource(R.drawable.ic_plex),
+                        iconTint = Color(0xFFE5A00D),
+                        title = "Plex",
+                        subtitle = "Connect and manage your music library",
+                        shape = providerSegmentItemShape,
+                        onClick = {
+                            context.startActivity(Intent(context, com.theveloper.pixelplay.presentation.plex.PlexActivity::class.java))
+                            onDismissRequest()
+                        }
+                    )
+
+                    ProviderRow(
                         iconPainter = painterResource(R.drawable.telegram),
                         iconTint = Color(0xFF2AABEE),
                         title = "Telegram",

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
+    <exclude domain="sharedpref" path="plex_prefs.xml"/>
     <!-- Exclude all credential/token stores from backup (pre-API 31 devices) -->
     <exclude domain="sharedpref" path="jellyfin_prefs.xml"/>
     <exclude domain="sharedpref" path="navidrome_prefs.xml"/>

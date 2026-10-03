@@ -1,5 +1,39 @@
 # PixelPlayer 🎵
 
+## PixelPlayerONE fork
+
+This fork is being adapted as a personal Android front end for a Plex music library.
+The first integration adds **Plex** to **Accounts** and the cloud streaming menu.
+Enter a reachable Plex Media Server URL and an X-Plex-Token, then choose
+**Import / refresh music**. Imported tracks appear in the existing Songs, Albums,
+Artists, and search views and play through the existing background Media3 player.
+All accessible music libraries on the selected server are imported.
+
+Use the server's LAN address (for example `http://192.168.1.10:32400`) at home,
+or a reachable HTTPS address for remote playback. The server must stay reachable;
+automatic server discovery, Plex PIN sign-in, transcoding, Plex playlists,
+playback reporting, and offline downloads are not implemented yet. Importing
+metadata does not download the audio. Disconnecting removes imported Plex tracks.
+See Plex's [token instructions](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/).
+Enter the token in the app; do not commit it to this repository.
+
+Spotify library import and App Remote playback are **not implemented**. Premium
+Duo can support the account requirement, and the official
+[Android SDK](https://developer.spotify.com/documentation/android) uses the Spotify
+app for background audio. However, Spotify's
+[developer policy](https://developer.spotify.com/policy) restricts products
+integrated with content from another service and audio mixing/overlap. The
+original merged-library proposal needs this restriction resolved before proceeding
+with an official Spotify integration. A Spotify Client ID alone does not resolve it.
+
+Plex credentials use encrypted device preferences, are excluded from Android
+backup, and are sent only in headers to the configured server origin. Stable
+library and artwork URIs contain server identity and track keys, never tokens.
+Imports update the database only after all pages load successfully.
+
+Focused JVM tests: `./gradlew :app:testDebugUnitTest --tests '*PlexClientTest'`.
+This repository requires Java 21 and the Android SDK declared in the Gradle files.
+
 <p align="center">
   <img src="assets/PixelPlayer.svg" alt="App Icon" height="250"/>
 </p>
